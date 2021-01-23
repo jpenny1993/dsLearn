@@ -37,9 +37,10 @@ ControllerStylus:: ControllerStylus(touchPosition* position) {
 }
 
 bool ControllerStylus::Touched() {
-   // Screen resisitance is not zero
-   return _position->z1 != 0 ||
-          _position->z2 != 0;
+   // DSi doesn't return value for screen resistance
+   // Using pixel values to ensure we always know
+   return _position->px > 0 &&
+          _position->py > 0;
 }
 
 uint16_t ControllerStylus::X() {
