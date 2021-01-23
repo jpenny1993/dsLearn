@@ -2,7 +2,9 @@
 #include <time.h>
 #include <clock.h>
 
-Clock::Clock() {
+
+Clock::Clock(int16_t fps) {
+   _fps = fps;
    _frame = 0;
    _ticker = 0;
 }
@@ -34,7 +36,7 @@ void Clock::Update() {
       _start = time(NULL);
    }
 
-   // Update realtime once a second, assume 60fps
+   // Update realtime once a second
    bool shouldUpdate = (_frame % 60) == 0;
    if (shouldUpdate) {
       if (_isEmulator) {
