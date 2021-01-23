@@ -1,4 +1,3 @@
-#include <nds.h>
 #include <controller.h>
 
 // Button - Checks key state changes for provided keycode
@@ -74,4 +73,3 @@ void Controller::ScanKeyPresses()
    // Get the current state of the touchpad
    touchRead(&_stylus);
 }
-;

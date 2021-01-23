@@ -1,7 +1,5 @@
 
-#include <time.h>
 #include <clock.h>
-
 
 Clock::Clock(int16_t fps) {
    _fps = fps;
@@ -47,4 +45,4 @@ void Clock::Update() {
          _isEmulator = _time == _start;
       }
    }
-};
+}
