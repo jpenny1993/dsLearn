@@ -52,15 +52,13 @@ uint16_t ControllerStylus::Y() {
 
 // Controller - Updates the keypad and stylus state
 
-Controller::Controller()
-{
+Controller::Controller() {
    _pressed = 0;
    _heldDown = 0;
    _released = 0;
 }
 
-void Controller::ScanKeyPresses()
-{
+void Controller::ScanKeyPresses() {
    // Update the libnds keypad state
    scanKeys();
 

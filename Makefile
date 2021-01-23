@@ -14,10 +14,12 @@ include $(DEVKITARM)/ds_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	$(shell basename $(CURDIR))
+TARGET	:=	$(shell basename $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	gfx source data  
-INCLUDES	:=	include build
+SOURCES	:=	source
+DATA		:=	data  
+INCLUDES	:=	include
+GRAPHICS	:=	gfx
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -56,14 +58,18 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
  
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
  
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir))
+export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+            		$(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
+            		$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.bin)))
- 
+BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+BMPFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.bmp)))
+PNGFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
+
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
 #---------------------------------------------------------------------------------
@@ -78,9 +84,14 @@ else
 endif
 #---------------------------------------------------------------------------------
 
-export OFILES	:=	$(BINFILES:.bin=.o) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
- 
+export OFILES_BIN   :=	$(addsuffix .o,$(BINFILES))
+
+export OFILES_SOURCES := $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+
+export OFILES := $(PNGFILES:.png=.o) $(BMPFILES:.bmp=.o) $(OFILES_BIN) $(OFILES_SOURCES)
+
+export HFILES := $(PNGFILES:.png=.h) $(BMPFILES:.bmp=.h) $(addsuffix .h,$(subst .,_,$(BINFILES)))
+
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/$(BUILD)
@@ -110,16 +121,36 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 $(OUTPUT).nds	: 	$(OUTPUT).elf
 $(OUTPUT).elf	:	$(OFILES)
- 
+
 #---------------------------------------------------------------------------------
-%.o	:	%.bin
+# The bin2o rule should be copied and modified
+# for each extension used in the data directories
+#---------------------------------------------------------------------------------
+
+#---------------------------------------------------------------------------------
+%.bin.o %_bin.h : %.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
-	$(bin2o)
- 
- 
+	@$(bin2o)
+
+#---------------------------------------------------------------------------------
+# This rule creates assembly source files using grit
+# grit takes an image file and a .grit describing how the file is to be processed
+# add additional rules like this for each image extension
+# you use in the graphics folders 
+#---------------------------------------------------------------------------------
+%.s %.h	: %.bmp %.grit
+#---------------------------------------------------------------------------------
+	grit $< -fts -o$*
+
+#---------------------------------------------------------------------------------
+%.s %.h	: %.png %.grit
+#---------------------------------------------------------------------------------
+	grit $< -fts -o$*
+
+
 -include $(DEPENDS)
- 
+
 #---------------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------------
