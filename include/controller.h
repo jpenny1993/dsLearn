@@ -1,52 +1,65 @@
 #include <nds.h>
 
+class ControllerButton {
+   private:
+   KEYPAD_BITS _keycode;
+   uint32_t* _pressed;
+   uint32_t* _heldDown;
+   uint32_t* _released;
+
+   public:
+   ControllerButton(KEYPAD_BITS keycode, uint32_t* pressed, uint32_t* heldDown, uint32_t* released);
+
+   // Returns true if button is pressed, this does an active check instead of relying on scanKeys() to have run
+   bool CurrentlyPressed();
+
+   // Returns true if the button is held down
+   bool HeldDown();
+
+   // Returns true if the button was pressed
+   bool Pressed();
+
+   // Returns true if the button was released
+   bool Released();
+};
+
 class Controller {
    private:
-      uint32_t _keys;
+      uint32_t  _pressed;
+      uint32_t  _heldDown;
+      uint32_t  _released;
       touchPosition _stylus;
 
    public:
       Controller();
 
-      // Gets the currently pressed keys
+      // Gets the current key state, should be done at least once per game loop
       void ScanKeyPresses();
 
       // Returns the current stylus position
       touchPosition Stylus();
 
-      // Returns true if the Start Button was pressed
-      bool Start();
+      ControllerButton Start = ControllerButton(KEY_START, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Select Button was pressed
-      bool Select();
+      ControllerButton Select = ControllerButton(KEY_SELECT, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Up Arrow was pressed
-      bool Up();
+      ControllerButton Up = ControllerButton(KEY_UP, &_pressed, &_heldDown, &_released);
       
-      // Returns true if the Down Arrow was pressed
-      bool Down();
+      ControllerButton Down = ControllerButton(KEY_DOWN, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Left Arrow was pressed
-      bool Left();
+      ControllerButton Left = ControllerButton(KEY_LEFT, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Right Arrow was pressed
-      bool Right();
+      ControllerButton Right = ControllerButton(KEY_RIGHT, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the X Button was pressed
-      bool X();
+      ControllerButton X = ControllerButton(KEY_X, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Y Button was pressed
-      bool Y();
+      ControllerButton Y = ControllerButton(KEY_Y, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the A Button was pressed
-      bool A();
+      ControllerButton A = ControllerButton(KEY_A, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the B Button was pressed
-      bool B();
+      ControllerButton B = ControllerButton(KEY_B, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Left Trigger was pressed
-      bool L();
+      ControllerButton L = ControllerButton(KEY_L, &_pressed, &_heldDown, &_released);
 
-      // Returns true if the Right Trigger was pressed
-      bool R();
+      ControllerButton R = ControllerButton(KEY_R, &_pressed, &_heldDown, &_released);
 };

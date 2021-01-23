@@ -1,19 +1,54 @@
 #include <nds.h>
 #include <controller.h>
 
+// Check state changes of Buttons on Controller 
+
+ControllerButton::ControllerButton(
+   KEYPAD_BITS keycode,
+   uint32_t* pressed,
+   uint32_t* heldDown,
+   uint32_t* released) {
+      _keycode = keycode;
+      _pressed = pressed;
+      _heldDown = heldDown;
+      _released = released;
+}
+
+bool ControllerButton::CurrentlyPressed() {
+   return keysCurrent() & _keycode;
+}
+
+bool ControllerButton::HeldDown() {
+   return *_heldDown & _keycode;
+}
+
+bool ControllerButton::Pressed() {
+   return *_pressed & _keycode;
+}
+
+bool ControllerButton::Released() {
+   return *_released & _keycode;
+}
+
+// Controller / Keypad
+
 Controller::Controller()
 {
-   _keys = 0;
+   _pressed = 0;
+   _heldDown = 0;
+   _released = 0;
 }
 
 void Controller::ScanKeyPresses()
 {
-   // Update the keypad state
+   // Update the libnds keypad state
    scanKeys();
 
-   // Get the current state of pressed keys
-   // Other functions that may be useful; keysCurrent(), keysHeld(), keysUp(), keysDownRepeat()
-   _keys = keysDown();
+   // Set the current key state
+   // Other functions that may be useful; keysDownRepeat(), keysSetRepeat( u8 setDelay, u8 setRepeat );
+   _pressed = keysDown();
+   _heldDown = keysHeld();
+   _released = keysUp();
 
    // Get the current state of the touchpad
    touchRead(&_stylus);
@@ -22,64 +57,4 @@ void Controller::ScanKeyPresses()
 touchPosition Controller::Stylus()
 {
    return _stylus;
-}
-
-bool Controller::Start()
-{
-   return _keys & KEY_START;
-}
-
-bool Controller::Select()
-{
-   return _keys & KEY_SELECT;
-}
-
-bool Controller::Up()
-{
-   return _keys & KEY_UP;
-}
-
-bool Controller::Down()
-{
-   return _keys & KEY_DOWN;
-}
-
-bool Controller::Left()
-{
-   return _keys & KEY_LEFT;
-}
-
-bool Controller::Right()
-{
-   return _keys & KEY_RIGHT;
-}
-
-bool Controller::X()
-{
-   return _keys & KEY_X;
-}
-
-bool Controller::Y()
-{
-   return _keys & KEY_Y;
-}
-
-bool Controller::A()
-{
-   return _keys & KEY_A;
-}
-
-bool Controller::B()
-{
-   return _keys & KEY_B;
-}
-
-bool Controller::L()
-{
-   return _keys & KEY_L;
-}
-
-bool Controller::R()
-{
-   return _keys & KEY_R;
 }

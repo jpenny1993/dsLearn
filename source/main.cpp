@@ -50,28 +50,36 @@ int main()
    return 0;
 }
 
-void KeypadTest(const char* button, bool pressed)
+void KeypadTest(const char* button, ControllerButton btn)
 {
-   if (pressed)
+   if (btn.Pressed())
    {
       iprintf("The %s button was pressed\n", button);
+   }
+   if (btn.HeldDown())
+   {
+      iprintf("The %s button was held down\n", button);
+   }
+   if (btn.Released())
+   {
+      iprintf("The %s button was released\n", button);
    }
 }
 
 void UpdateGame(double deltaTime) 
 {
-   KeypadTest("A", keypad.A());
-   KeypadTest("B", keypad.B());
-   KeypadTest("Y", keypad.Y());
-   KeypadTest("X", keypad.X());
-   KeypadTest("L", keypad.L());
-   KeypadTest("R", keypad.R());
-   KeypadTest("Start", keypad.Start());
-   KeypadTest("Select", keypad.Select());
-   KeypadTest("Up", keypad.Up());
-   KeypadTest("Down", keypad.Down());
-   KeypadTest("Left", keypad.Left());
-   KeypadTest("Right", keypad.Right());
+   KeypadTest("A", keypad.A);
+   KeypadTest("B", keypad.B);
+   KeypadTest("Y", keypad.Y);
+   KeypadTest("X", keypad.X);
+   KeypadTest("L", keypad.L);
+   KeypadTest("R", keypad.R);
+   KeypadTest("Start", keypad.Start);
+   KeypadTest("Select", keypad.Select);
+   KeypadTest("Up", keypad.Up);
+   KeypadTest("Down", keypad.Down);
+   KeypadTest("Left", keypad.Left);
+   KeypadTest("Right", keypad.Right);
 }
 
 void RenderGame(double deltaTime)
