@@ -1,47 +1,25 @@
 // Libraries
 #include <nds.h>
-#include <time.h>
+#include <clock.h>
 #include <stdio.h>
 
 // My Includes
 #include <controller.h>
 
-void UpdateGame(double deltaTime);
-void RenderGame(double deltaTime);
+void UpdateGame(void);
+void RenderGame(void);
 
+Clock rtc;
 Controller ctrl;
 
 int main()
 {
-   time_t currentTime, deltaTime, lastTime = time(NULL);
-   int16_t hours, seconds, minutes;
-   uint64_t frame = 0;
-   double fps;
    consoleDemoInit();
 
-   while (1)
-   {
-      frame++;
-      // Calculate time between frames
-      currentTime = time(NULL);
-      deltaTime = currentTime - lastTime;
-      fps = (1.0 / deltaTime) * 1000;
-      lastTime = currentTime;
+   while (1) {
 
-      // Convert unix timestamp into human readable time
-      struct tm *timeStruct = gmtime((const time_t *)&currentTime);
-      hours = timeStruct->tm_hour;
-      minutes = timeStruct->tm_min;
-      seconds = timeStruct->tm_sec;
-
-      // Print debug info
-      // TODO: why is delta time not working as expected
-      iprintf("\x1b[0;1HTime = %02i:%02i:%02i", hours, minutes, seconds);
-      iprintf("\x1b[1;1HFrame = %04lld\n", frame);
-      iprintf("\x1b[2;1HFPS = %02f\n", fps);
-
-      UpdateGame(deltaTime);
-      RenderGame(deltaTime);
+      UpdateGame();
+      RenderGame();
 
       swiWaitForVBlank();
       ctrl.ScanKeyPresses();
@@ -50,8 +28,7 @@ int main()
    return 0;
 }
 
-void KeypadTest(const char *button, ControllerButton btn)
-{
+void KeypadTest(const char *button, ControllerButton btn) {
    if (btn.Pressed())
    {
       iprintf("The %s button was pressed\n", button);
@@ -66,8 +43,12 @@ void KeypadTest(const char *button, ControllerButton btn)
    }
 }
 
-void UpdateGame(double deltaTime)
-{
+void UpdateGame(void) {
+   rtc.Update();
+   tm time = rtc.Time();
+   iprintf("\x1b[0;1HTime = %02i:%02i:%02i", time.tm_hour, time.tm_min, time.tm_sec);
+   iprintf("\x1b[1;1HFrame = %04lld\n", rtc.Frame());
+
    iprintf("Stylus %s\n", (ctrl.Stylus.Touched() ? "was touched" : "not touched"));
    iprintf("Stylus - x %04i, y %04i\n", ctrl.Stylus.X(), ctrl.Stylus.Y());
 
@@ -85,6 +66,5 @@ void UpdateGame(double deltaTime)
    KeypadTest("Right", ctrl.Right);
 }
 
-void RenderGame(double deltaTime)
-{
+void RenderGame(void) {
 }
