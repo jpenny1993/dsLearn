@@ -9,7 +9,7 @@
 void UpdateGame(double deltaTime);
 void RenderGame(double deltaTime);
 
-Controller keypad;
+Controller ctrl;
 
 int main()
 {
@@ -17,7 +17,7 @@ int main()
    int16_t hours, seconds, minutes;
    uint64_t frame = 0;
    double fps;
-	consoleDemoInit();
+   consoleDemoInit();
 
    while (1)
    {
@@ -29,7 +29,7 @@ int main()
       lastTime = currentTime;
 
       // Convert unix timestamp into human readable time
-      struct tm* timeStruct = gmtime((const time_t *)&currentTime);
+      struct tm *timeStruct = gmtime((const time_t *)&currentTime);
       hours = timeStruct->tm_hour;
       minutes = timeStruct->tm_min;
       seconds = timeStruct->tm_sec;
@@ -44,13 +44,13 @@ int main()
       RenderGame(deltaTime);
 
       swiWaitForVBlank();
-      keypad.ScanKeyPresses();
+      ctrl.ScanKeyPresses();
    }
 
    return 0;
 }
 
-void KeypadTest(const char* button, ControllerButton btn)
+void KeypadTest(const char *button, ControllerButton btn)
 {
    if (btn.Pressed())
    {
@@ -66,23 +66,25 @@ void KeypadTest(const char* button, ControllerButton btn)
    }
 }
 
-void UpdateGame(double deltaTime) 
+void UpdateGame(double deltaTime)
 {
-   KeypadTest("A", keypad.A);
-   KeypadTest("B", keypad.B);
-   KeypadTest("Y", keypad.Y);
-   KeypadTest("X", keypad.X);
-   KeypadTest("L", keypad.L);
-   KeypadTest("R", keypad.R);
-   KeypadTest("Start", keypad.Start);
-   KeypadTest("Select", keypad.Select);
-   KeypadTest("Up", keypad.Up);
-   KeypadTest("Down", keypad.Down);
-   KeypadTest("Left", keypad.Left);
-   KeypadTest("Right", keypad.Right);
+   iprintf("Stylus %s\n", (ctrl.Stylus.Touched() ? "was touched" : "not touched"));
+   iprintf("Stylus - x %04i, y %04i\n", ctrl.Stylus.X(), ctrl.Stylus.Y());
+
+   KeypadTest("A", ctrl.A);
+   KeypadTest("B", ctrl.B);
+   KeypadTest("Y", ctrl.Y);
+   KeypadTest("X", ctrl.X);
+   KeypadTest("L", ctrl.L);
+   KeypadTest("R", ctrl.R);
+   KeypadTest("Start", ctrl.Start);
+   KeypadTest("Select", ctrl.Select);
+   KeypadTest("Up", ctrl.Up);
+   KeypadTest("Down", ctrl.Down);
+   KeypadTest("Left", ctrl.Left);
+   KeypadTest("Right", ctrl.Right);
 }
 
 void RenderGame(double deltaTime)
 {
-
 }

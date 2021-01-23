@@ -1,7 +1,7 @@
 #include <nds.h>
 #include <controller.h>
 
-// Check state changes of Buttons on Controller 
+// Button - Checks key state changes for provided keycode
 
 ControllerButton::ControllerButton(
    KEYPAD_BITS keycode,
@@ -30,7 +30,27 @@ bool ControllerButton::Released() {
    return *_released & _keycode;
 }
 
-// Controller / Keypad
+// Stylus - Checks if the screen was touched & returns (x, y)
+
+ControllerStylus:: ControllerStylus(touchPosition* position) {
+   _position = position;
+}
+
+bool ControllerStylus::Touched() {
+   // Screen resisitance is not zero
+   return _position->z1 != 0 ||
+          _position->z2 != 0;
+}
+
+uint16_t ControllerStylus::X() {
+   return _position->px;
+}
+
+uint16_t ControllerStylus::Y() {
+   return _position->py;
+}
+
+// Controller - Updates the keypad and stylus state
 
 Controller::Controller()
 {
@@ -53,8 +73,4 @@ void Controller::ScanKeyPresses()
    // Get the current state of the touchpad
    touchRead(&_stylus);
 }
-
-touchPosition Controller::Stylus()
-{
-   return _stylus;
-}
+;

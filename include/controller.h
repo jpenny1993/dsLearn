@@ -23,6 +23,23 @@ class ControllerButton {
    bool Released();
 };
 
+class ControllerStylus {
+   private:
+   touchPosition* _position;
+
+   public:
+   ControllerStylus(touchPosition* position);
+
+   // Returns true if the stylus has touched the screen
+   bool Touched();
+
+   // Returns the X pixel position of the stylus 
+   uint16_t X();
+
+   // Returns the Y pixel position of the stylus 
+   uint16_t Y();
+};
+
 class Controller {
    private:
       uint32_t  _pressed;
@@ -36,8 +53,7 @@ class Controller {
       // Gets the current key state, should be done at least once per game loop
       void ScanKeyPresses();
 
-      // Returns the current stylus position
-      touchPosition Stylus();
+      ControllerStylus Stylus = ControllerStylus(&_stylus);
 
       ControllerButton Start = ControllerButton(KEY_START, &_pressed, &_heldDown, &_released);
 
