@@ -6,6 +6,11 @@ ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
 endif
 
+GAME_TITLE		:=	DS Learn
+GAME_SUBTITLE1	:=	My first homebrew
+GAME_SUBTITLE2	:=	https://j-penny.com
+GAME_ICON		:= $(CURDIR)/../icon.bmp
+
 include $(DEVKITARM)/ds_rules
 
 #---------------------------------------------------------------------------------
