@@ -2,7 +2,7 @@
 
 This repo is a playground area for me to be able to learn the basics of nintendo DS development.
 
-# Setting up a development environment
+## Setting up a development environment
 1. Download and install [devkitPro](https://devkitpro.org), [installer link](https://github.com/devkitPro/installer/releases/latest)
     - Only the NDS development kit is required
     - I installed to `C:/nds/devkitPro`
@@ -16,14 +16,14 @@ This repo is a playground area for me to be able to learn the basics of nintendo
       - C/C++
       - C++ Intellisense
 
-# Building the project
+## Building the project
 1. Open `MSYS2`, this was installed as part of devkitPro
     - I chose to add this as an option to [Windows Terminal](https://www.msys2.org/docs/terminals)
 2. Navigate to your repository
     - Run the command `cd /c/nds/repo/dsLearn`
 3. Run the `make` command
 
-# Useful material
+## Useful material
 - [NDS Homebrew Development](https://github.com/jdriselvato/NDS-Development)
 - [VSCode Template](https://github.com/cuibonobo/nds_vscode_template)
 - [libnds Documentation](https://libnds.devkitpro.org/index.html)
@@ -34,7 +34,7 @@ This repo is a playground area for me to be able to learn the basics of nintendo
 - [dsgmLib - DS Game Maker](https://github.com/CTurt/dsgmLib) 
     - _The only person I found to have implemented NiFi, by changing packet headers in promiscuous mode, no clue if it works yet_
 
-# Other peoples games to learn from
+## Other peoples games to learn from
 - [Space Impakto DS](http://rel.phatcode.net/index.php?action=contents&item=Space-Impakto-DS)
 - [Bubble Fight EX DS](http://rel.phatcode.net/index.php?action=contents&item=Bubble_Fight_EX_DS)
 - [SpelunkyDS](https://github.com/dbeef/spelunky-ds)
