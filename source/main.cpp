@@ -1,4 +1,4 @@
-// Libraries
+// NDS Libraries
 #include <nds.h>
 #include <stdio.h>
 #include <gl2d.h>
@@ -139,7 +139,12 @@ void RenderMain(void) {
    // draw sprite at position
    glSprite(shuttleX, shuttleY, GL_FLIP_NONE, &shuttleImg[0]);
 
-   KromGLFont.PrintCentered(0, 5, "HELLO WORLD");
+   // Get time & print in formatted string 
+   tm time = rtc.Time();
+   char timeStr[9];
+   sprintf(timeStr, "%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
+   KromGLFont.PrintCentered(0, 5, timeStr);
+
    // Stop 2D rendering
    glEnd2D();
    glFlush(0);
