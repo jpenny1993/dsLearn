@@ -35,7 +35,7 @@ void Clock::Update() {
    }
 
    // Update realtime once a second
-   bool shouldUpdate = (_frame % 60) == 0;
+   bool shouldUpdate = (_frame % _fps) == 0;
    if (shouldUpdate) {
       if (_isEmulator) {
          _ticker++;
