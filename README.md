@@ -32,7 +32,11 @@ This repo is a playground area for me to be able to learn the basics of nintendo
 - [VRAM Banks Selector](https://mtheall.com/banks.html#)
 - [VRAM BG Allocation Conflict Viewer](https://mtheall.com/vram.html#)
 - [dsgmLib - DS Game Maker](https://github.com/CTurt/dsgmLib) 
-    - _The only person I found to have implemented NiFi, by changing packet headers in promiscuous mode, no clue if it works yet_
+    - _The first person I found to have implemented NiFi, by changing packet headers in promiscuous mode, no clue if it works yet_
+- [NES DS](https://github.com/RocketRobz/NesDS)
+    - _Includes NiFi support_ [Related](https://gbatemp.net/threads/anybody-got-nifi-to-work-in-nesds.317583)
+- [CQuake](https://gbatemp.net/threads/cquake-nifi-ds-2-ds-local-multiplayer.350334)
+    - _Includes NiFi support_
 
 ## Other peoples games to learn from
 - [Space Impakto DS](http://rel.phatcode.net/index.php?action=contents&item=Space-Impakto-DS)
