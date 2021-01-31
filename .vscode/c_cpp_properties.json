@@ -22,7 +22,7 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "${workspaceFolder}\\src\\**",
+                    "${workspaceFolder}\\src",
                     "C:\\nds\\devkitPro\\libnds\\include\\**",
                     "C:\\nds\\devkitPro\\devkitARM\\arm-none-eabi\\include\\**"
                 ],
