@@ -1,4 +1,4 @@
-#include "glfont.h"
+#include "opengl/glfont.h"
 
 GLFont::GLFont()
 {

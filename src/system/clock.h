@@ -1,5 +1,8 @@
 #include <time.h>
 
+#ifndef Clock__H
+#define Clock__H
+
 class Clock {
    private:
    bool _isEmulator; // DeSmuMe doesn't implement time properly
@@ -20,3 +23,5 @@ class Clock {
 
    void Update();
 };
+
+#endif // Clock__H

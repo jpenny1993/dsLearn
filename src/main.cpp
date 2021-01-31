@@ -8,9 +8,9 @@
 #include "shuttle.h"
 
 // My Includes
-#include "clock.h"
-#include "controller.h"
-#include "glfont.h"
+#include "system/clock.h"
+#include "input/controller.h"
+#include "opengl/glfont.h"
 
 void InitHardware(void);
 void InitMain(void);

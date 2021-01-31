@@ -7,7 +7,8 @@
             ],
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/build/**",
+                "${workspaceFolder}/src/**",
                 "C:/nds/devkitPro/libnds/include/**",
                 "C:/nds/devkitPro/devkitARM/arm-none-eabi/include/**"
             ],
@@ -21,7 +22,7 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "${workspaceFolder}\\include\\**",
+                    "${workspaceFolder}\\src\\**",
                     "C:\\nds\\devkitPro\\libnds\\include\\**",
                     "C:\\nds\\devkitPro\\devkitARM\\arm-none-eabi\\include\\**"
                 ],

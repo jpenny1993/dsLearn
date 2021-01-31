@@ -1,5 +1,8 @@
 #include <nds.h>
 
+#ifndef Controller__H
+#define Controller__H
+
 class ControllerButton {
    private:
    KEYPAD_BITS _keycode;
@@ -79,3 +82,5 @@ class Controller {
 
       ControllerButton R = ControllerButton(KEY_R, &_pressed, &_heldDown, &_released);
 };
+
+#endif // Controller__H
