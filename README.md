@@ -42,6 +42,16 @@ This repo is a playground area for me to be able to learn the basics of nintendo
 - [CQuake](https://gbatemp.net/threads/cquake-nifi-ds-2-ds-local-multiplayer.350334)
   - _Includes NiFi support_
 
+## Further Reading
+
+- <https://softwareengineering.stackexchange.com/questions/245236/is-heap-fragmentation-a-problem-in-bare-metal-arm-with-g>
+- <https://stackoverflow.com/questions/8036474/when-vectors-are-allocated-do-they-use-memory-on-the-heap-or-the-stack>
+- <https://stackoverflow.com/questions/21505021/extern-and-global-same-variable-in-same-file>
+- <https://stackoverflow.com/questions/37323227/benefits-of-using-extern-declaration-in-same-file-as-definition>
+- <https://patater.com/files/projects/manual/manual.html>
+  > Another advantage of using 16-color sprites is the ability to use 16 different palettes.
+  - There's a maximum of 4 bit palettes and it is 16!
+
 ## Other peoples games to learn from
 
 - [Space Impakto DS](http://rel.phatcode.net/index.php?action=contents&item=Space-Impakto-DS)

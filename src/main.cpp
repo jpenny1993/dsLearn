@@ -4,14 +4,18 @@
 #include <gl2d.h>
 
 // GRIT auto-generated  files
-#include "font.h"
-#include "glfont_krom.h"
-#include "shuttle.h"
+#include "background.h"
+//#include "font.h"
+// #include "glfont_krom.h"
+// #include "shuttle.h"
 
 // My Includes
+#include "GameState.h"
+#include "input/Controller.h"
+#include "oam/Hud.h"
+#include "oam/OamManager.h"
 #include "system/clock.h"
-#include "input/controller.h"
-#include "opengl/glfont.h"
+// #include "opengl/glfont.h"
 
 void InitHardware(void);
 void InitMain(void);
@@ -23,197 +27,167 @@ void RenderSub(void);
 Clock rtc;
 Controller ctrl;
 
-GLFont KromGLFont;
-glImage KromGLFontImages[1024 / 16];
-
-int shuttleTextureId;
-glImage shuttleImg[1];
-
-int shuttleX = 30, shuttleY = 30;
-
 int main() {
-   const int tile_base = 0;
-	const int map_base = 31;
+   #ifndef NDEBUG
+      defaultExceptionHandler();
+   #endif
 
-	PrintConsole topScreen;
-	PrintConsole bottomScreen;
-	
-	videoSetMode(MODE_0_2D);
-	videoSetModeSub(MODE_0_2D);
+   // Setup singletons 
+   GameState::init();
+   OAMManager::init();
+   Hud::init();
 
-	vramSetBankA(VRAM_A_MAIN_BG);
-	vramSetBankC(VRAM_C_SUB_BG);
+   // Setup hardware
+   InitHardware();
+   OAMManager::init_sprite_hardware();
+   OAMManager::init_background_hardware();
 
-	consoleInit(&topScreen, 3, BgType_Text4bpp, BgSize_T_256x256, map_base, tile_base, true, true);
-	consoleInit(&bottomScreen, 3, BgType_Text4bpp, BgSize_T_256x256, map_base, tile_base, false, true);
+   //Copy background tiles to the graphics memory
+   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::main()._background_id), sizeof(backgroundBitmap));
+   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::sub()._background_id), sizeof(backgroundBitmap));
 
-	ConsoleFont font;
-	font.gfx = (u16*)fontTiles;
-	font.pal = (u16*)fontPal;
-	font.numChars = 95;
-	font.numColors =  fontPalLen / 2;
-	font.bpp = 4;
-	font.asciiOffset = 32;
-	font.convertSingleColor = false;
-	
-	consoleSetFont(&topScreen, &font);
-	consoleSetFont(&bottomScreen, &font);
-	
-   consoleSelect(&topScreen);
-	iprintf("\n\n\tHello DS dev'rs\n");
-	iprintf("\twww.drunkencoders.com\n");
-	iprintf("\twww.devkitpro.org");
+   // Setup fonts
+   Hud::instance().init_console();
 
-   consoleSelect(&bottomScreen);
-	iprintf("Custom Font Demo\n");
-	iprintf("   by Poffy\n");
-	iprintf("modified by WinterMute\n");
-	iprintf("for libnds examples\n");
+   // Copy  background palette to the graphics memory
+   dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
+   dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
+
+   iprintf("\n\n\tHello World\n");
+
+   lcdMainOnBottom();
 
    while(1) {
-		swiWaitForVBlank();
-		ctrl.ScanKeyPresses();
-		if (ctrl.A.Pressed()) break;
-	}
-
-	return 0;
-
-   InitHardware();
-   InitMain();
-   InitSub();
-
-   while (1) {
-      rtc.Update();
-
-      UpdateGame();
-      RenderMain();
       swiWaitForVBlank();
-      RenderSub();
-
+      rtc.Update();
       ctrl.ScanKeyPresses();
+      if (ctrl.A.Pressed()) break;
    }
+
+   GameState::dispose();
+   OAMManager::dispose();
 
    return 0;
 }
 
 void InitHardware(void) {
-   // videoSetMode(MODE_5_3D);
-   // videoSetModeSub(MODE_5_2D);
+   /*  Turn on the 2D graphics core. */
+   // powerOn(POWER_ALL_2D);
 
-   // lcdMainOnBottom(); // use main renderer on bottom screen
-   // // lcdMainOnTop(); // use main renderer on top screen
+   // Setup memory allocation for graphics
+   vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
+   vramSetBankB(VRAM_B_MAIN_SPRITE_0x06400000);
+   vramSetBankC(VRAM_C_SUB_BG_0x06200000);
 
-   // // setup vram usage, currently overkill copy paste
-   // vramSetBankA(VRAM_A_TEXTURE);
-   // vramSetBankB(VRAM_B_TEXTURE);
-   // vramSetBankC(VRAM_C_TEXTURE);
-   // vramSetBankD(VRAM_D_SUB_SPRITE);        // oam fonts et al
-   // vramSetBankH(VRAM_H_SUB_BG);            // Our sub BG
-   // vramSetBankI(VRAM_I_SUB_BG_0x06208000); // H + I makes 256*192
-   // vramSetBankF(VRAM_F_TEX_PALETTE);
+   /* Set the video mode on the main screen. */
+	videoSetMode(MODE_5_2D |
+                DISPLAY_SPR_ACTIVE |    // Turn on sprites
+                DISPLAY_BG3_ACTIVE |    // Enable BG3 for display
+                DISPLAY_SPR_1D_LAYOUT);
+
+    /* Set the video mode on the sub screen. */
+    videoSetModeSub(MODE_5_2D |          // Set the graphics mode to Mode 5
+                    DISPLAY_BG3_ACTIVE); // Enable BG3 for display
 }
 
-void InitMain(void) {
-   // // Initialize GL2D
-   // glScreen2D();
+/*
+void OpenGlDemo(void) {
+   GLFont KromGLFont;
+   glImage KromGLFontImages[1024 / 16];
 
-   // // Load sprite
-   // shuttleTextureId = glLoadTileSet(
-   //     shuttleImg,      // pointer to glImage array
-   //     64,              // sprite width
-   //     64,              // sprite height
-   //     64,              // bitmap image width
-   //     64,              // bitmap image height
-   //     GL_RGB16,        // texture type for glTexImage2D() in videoGL.h
-   //     TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
-   //     TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
-   //     GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-   //     16,                 // Length of the palette to use (16 colors)
-   //     (u16 *)shuttlePal,  // Load our 256 color tiles palette
-   //     (u8 *)shuttleBitmap // image data generated by GRIT
-   // );
+   int shuttleTextureId;
+   glImage shuttleImg[1];
 
-   // Load Font
-   // KromGLFont.Load(KromGLFontImages,
-   //                 16,
-   //                 16,
-   //                 16,
-   //                 1024,
-   //                 GL_RGB16,
-   //                 TEXTURE_SIZE_16,
-   //                 TEXTURE_SIZE_1024,
-   //                 TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
-   //                 (u8 *)glfont_kromBitmap,
-   //                 16,
-   //                 glfont_kromPal);
-   
-   oamInit(&oamMain, SpriteMapping_1D_128, false);
-}
+   int shuttleX = 30, shuttleY = 30;
 
-void InitSub(void) {
-   oamInit(&oamSub, SpriteMapping_1D_128, false);
+   // InitHardware
+   videoSetMode(MODE_5_3D);
+   videoSetModeSub(MODE_5_2D);
 
-   // KromFont.Init(&oamSub, (u8*)font_kromTiles, 16, 16, SpriteSize_16x16, 64, 64);
+   lcdMainOnBottom(); // use main renderer on bottom screen
 
-   // KromGLFont.Load( KromGLFontImages,
-   //          16, 
-   //          16,
-   //          16,
-   //          1024,
-   //          GL_RGB16,
-   //          TEXTURE_SIZE_16,
-   //          TEXTURE_SIZE_1024,
-   //          TEXGEN_OFF|GL_TEXTURE_COLOR0_TRANSPARENT,
-   //          (u8*)glfont_kromBitmap,
-   //          16,
-   //          glfont_kromPal );
-}
+   // setup vram usage, currently overkill copy paste
+   vramSetBankA(VRAM_A_TEXTURE);
+   vramSetBankB(VRAM_B_TEXTURE);
+   vramSetBankC(VRAM_C_TEXTURE);
+   vramSetBankD(VRAM_D_SUB_SPRITE);        // oam fonts et al
+   vramSetBankH(VRAM_H_SUB_BG);            // Our sub BG
+   vramSetBankI(VRAM_I_SUB_BG_0x06208000); // H + I makes 256*192
+   vramSetBankF(VRAM_F_TEX_PALETTE);
 
-void UpdateGame(void) {
-   // Read player controls
-   if (ctrl.Left.HeldDown()) shuttleX -= 5;
-   else if (ctrl.Right.HeldDown()) shuttleX += 5;
+   // Initialize GL2D
+   glScreen2D();
 
-   if (ctrl.Up.HeldDown()) shuttleY -= 2;
-   else if (ctrl.Down.HeldDown()) shuttleY += 2;
+   // Load sprite
+   shuttleTextureId = glLoadTileSet(
+       shuttleImg,      // pointer to glImage array
+       64,              // sprite width
+       64,              // sprite height
+       64,              // bitmap image width
+       64,              // bitmap image height
+       GL_RGB16,        // texture type for glTexImage2D() in videoGL.h
+       TEXTURE_SIZE_64, // sizeX for glTexImage2D() in videoGL.h
+       TEXTURE_SIZE_64, // sizeY for glTexImage2D() in videoGL.h
+       GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+       16,                 // Length of the palette to use (16 colors)
+       (u16 *)shuttlePal,  // Load our 256 color tiles palette
+       (u8 *)shuttleBitmap // image data generated by GRIT
+   );
 
-   if (ctrl.Stylus.Touched()) {
-      shuttleX = ctrl.Stylus.X() - 32;
-      shuttleY = ctrl.Stylus.Y() - 32;
+   Load Font
+   KromGLFont.Load(KromGLFontImages,
+                   16,
+                   16,
+                   16,
+                   1024,
+                   GL_RGB16,
+                   TEXTURE_SIZE_16,
+                   TEXTURE_SIZE_1024,
+                   TEXGEN_OFF | GL_TEXTURE_COLOR0_TRANSPARENT,
+                   (u8 *)glfont_kromBitmap,
+                   16,
+                   glfont_kromPal);
+
+   while (1) {
+      // Read player controls
+      if (ctrl.Left.HeldDown()) shuttleX -= 5;
+      else if (ctrl.Right.HeldDown()) shuttleX += 5;
+
+      if (ctrl.Up.HeldDown()) shuttleY -= 2;
+      else if (ctrl.Down.HeldDown()) shuttleY += 2;
+
+      if (ctrl.Stylus.Touched()) {
+         shuttleX = ctrl.Stylus.X() - 32;
+         shuttleY = ctrl.Stylus.Y() - 32;
+      }
+
+      // Collide with screen borders
+      if (shuttleX < 0) shuttleX = 0;
+      else if (shuttleX > (255 - 64)) shuttleX = (255 - 64);
+
+      if (shuttleY < 0) shuttleY = 0;
+      else if (shuttleY > (192 - 64)) shuttleY = (192 - 64);
+
+      // switch the screen being rendered
+      if (ctrl.A.Pressed()) {
+         lcdSwap();
+      }
+
+      // Start 2D mode
+      glBegin2D();
+
+      // draw sprite at position
+      glSprite(shuttleX, shuttleY, GL_FLIP_NONE, &shuttleImg[0]);
+
+      // Get time & print in formatted string 
+      tm time = rtc.Time();
+      char timeStr[9];
+      sprintf(timeStr, "%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
+      KromGLFont.PrintCentered(0, 5, timeStr);
+
+      // Stop 2D rendering
+      glEnd2D();
+      glFlush(0);
    }
-
-   // Collide with screen borders
-   if (shuttleX < 0) shuttleX = 0;
-   else if (shuttleX > (255 - 64)) shuttleX = (255 - 64);
-
-   if (shuttleY < 0) shuttleY = 0;
-   else if (shuttleY > (192 - 64)) shuttleY = (192 - 64);
-
-   // switch the screen being rendered
-   if (ctrl.A.Pressed()) {
-      lcdSwap();
-   }
 }
-
-void RenderMain(void) {
-   // // Start 2D mode
-   // glBegin2D();
-
-   // // draw sprite at position
-   // glSprite(shuttleX, shuttleY, GL_FLIP_NONE, &shuttleImg[0]);
-
-   // // Get time & print in formatted string 
-   // tm time = rtc.Time();
-   // char timeStr[9];
-   // sprintf(timeStr, "%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
-   // KromGLFont.PrintCentered(0, 5, timeStr);
-
-   // // Stop 2D rendering
-   // glEnd2D();
-   // glFlush(0);
-   // oamUpdate(&oamMain);
-}
-
-void RenderSub(void) {
-   oamUpdate(&oamSub);
-}
+*/

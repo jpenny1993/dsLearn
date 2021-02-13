@@ -1,48 +1,11 @@
-#include <nds.h>
-
 #ifndef Controller__H
 #define Controller__H
 
-class ControllerButton {
-   private:
-   KEYPAD_BITS _keycode;
-   uint32_t* _pressed;
-   uint32_t* _heldDown;
-   uint32_t* _released;
+#include <nds.h>
+#include "input/ControllerButton.h"
+#include "input/ControllerStylus.h"
 
-   public:
-   ControllerButton(KEYPAD_BITS keycode, uint32_t* pressed, uint32_t* heldDown, uint32_t* released);
-
-   // Returns true if button is pressed, this does an active check instead of relying on scanKeys() to have run
-   bool CurrentlyPressed();
-
-   // Returns true if the button is held down
-   bool HeldDown();
-
-   // Returns true if the button was pressed
-   bool Pressed();
-
-   // Returns true if the button was released
-   bool Released();
-};
-
-class ControllerStylus {
-   private:
-   touchPosition* _position;
-
-   public:
-   ControllerStylus(touchPosition* position);
-
-   // Returns true if the stylus has touched the screen
-   bool Touched();
-
-   // Returns the X pixel position of the stylus 
-   uint16_t X();
-
-   // Returns the Y pixel position of the stylus 
-   uint16_t Y();
-};
-
+// Provides a fluent API to check for key presses
 class Controller {
    private:
       uint32_t  _pressed;
