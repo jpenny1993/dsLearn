@@ -75,9 +75,11 @@ void InitHardware(void) {
    // powerOn(POWER_ALL_2D);
 
    // Setup memory allocation for graphics
+   // <https://mtheall.com/banks.html#A=MBG0&B=MOBJ0&C=SBG&D=SOBJ>
    vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
    vramSetBankB(VRAM_B_MAIN_SPRITE_0x06400000);
    vramSetBankC(VRAM_C_SUB_BG_0x06200000);
+   vramSetBankD(VRAM_D_SUB_SPRITE);
 
    /* Set the video mode on the main screen. */
 	videoSetMode(MODE_5_2D |
