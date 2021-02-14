@@ -13,6 +13,7 @@ class Hud {
 public:
 
     Hud();
+    ~Hud();
 
     static void init();
 
@@ -31,8 +32,8 @@ public:
 
     void debug_oam();
 
-    PrintConsole main_console{};
-    PrintConsole sub_console{};
+    PrintConsole *main_console{};
+    PrintConsole *sub_console{};
 
     static Hud* _instance;
 };

@@ -26,6 +26,13 @@ void Hud::update() {
 }
 
 Hud::Hud() {
+    main_console = new PrintConsole();
+    sub_console = new PrintConsole();
+}
+
+Hud::~Hud() {
+    delete main_console;
+    delete sub_console;
 }
 
 void Hud::debug_oam() {
@@ -43,12 +50,12 @@ void Hud::clear_console() {
 }
 
 void Hud::init_console() {
-    constexpr int tile_base = 2;
-    constexpr int map_base = 8;
+    constexpr int tile_base = 0;
+    constexpr int map_base = 2;
 
     //The default instance utilizes the sub display, approximatly 15KiB of vram C starting
     //at tile base 0 and 2KiB of map at map base 30.
-    consoleInit(&main_console,
+    consoleInit(main_console,
                (int)LayerLevel::TOP,
                BgType_Text4bpp,
                BgSize_T_256x256,
@@ -66,8 +73,8 @@ void Hud::init_console() {
    font.asciiOffset = 32;
    font.convertSingleColor = false;
 
-    consoleSetFont(&main_console, &font);
+    consoleSetFont(main_console, &font);
 
-   consoleInit(&sub_console, 0, BgType_Text4bpp, BgSize_T_256x256, map_base, tile_base, false, false);
-   consoleSetFont(&sub_console, &font);
+   consoleInit(sub_console, 0, BgType_Text4bpp, BgSize_T_256x256, map_base, tile_base, false, false);
+   consoleSetFont(sub_console, &font);
 }

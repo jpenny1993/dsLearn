@@ -40,23 +40,23 @@ int main() {
    // Setup hardware
    InitHardware();
    OAMManager::init_sprite_hardware();
-   //OAMManager::init_background_hardware();
+   OAMManager::init_background_hardware();
 
    //Copy background tiles to the graphics memory
-   //dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::main()._background_id), sizeof(backgroundBitmap));
-   //dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::sub()._background_id), sizeof(backgroundBitmap));
+   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::main()._background_id), sizeof(backgroundBitmap));
+   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::sub()._background_id), sizeof(backgroundBitmap));
 
    // Setup fonts
    Hud::instance().init_console();
 
    // Copy  background palette to the graphics memory
-   //dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
-   //dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
+   dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
+   dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
 
-   consoleSelect(&Hud::instance().main_console);
+   consoleSelect(Hud::instance().main_console);
    iprintf("\n\n\tHello World (main)\n");
 
-   consoleSelect(&Hud::instance().sub_console);
+   consoleSelect(Hud::instance().sub_console);
    iprintf("\n\n\tHello World (sub)\n");
 
    lcdMainOnBottom();
