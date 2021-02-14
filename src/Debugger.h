@@ -25,32 +25,21 @@ static std::string getFilenameFromPath(const std::string& path){
 }
 
 static void logAssert(const char* assert, const char* file, int line) {
-
-    // Uppercasing since we have only big characters in the Spelunky font
-    // and lower-cased ones simply aren't displayed.
-    std::string assertUppercased(assert);
-    std::string fileUppercased(file);
-    fileUppercased = getFilenameFromPath(fileUppercased);
-    std::locale loc;
-
-    for (char &i : fileUppercased)
-        i = std::toupper(i, loc);
-    for (char &i : assertUppercased)
-        i = std::toupper(i, loc);
+    std::string assertStr(assert);
+    std::string fileStr(file);
+    fileStr = getFilenameFromPath(fileStr);
 
     printf("ASSERT FAILED: %s\nFILE: %s\nLINE: %i\n",
-            assertUppercased.c_str(), fileUppercased.c_str(), line);
+            assertStr.c_str(), fileStr.c_str(), line);
 }
 
 #define DEBUG_ASSERT(x) \
-	if(!(x)) \
-    { \
+    if(!(x)) { \
       logAssert(#x, __FILE__, __LINE__);\
     }
 
 #define DEBUG_BREAKING_ASSERT(x) \
-	if(!(x)) \
-    { \
+    if(!(x)) { \
       logAssert(#x, __FILE__, __LINE__);\
       assert(false); \
     }
