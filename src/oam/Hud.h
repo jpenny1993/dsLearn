@@ -31,7 +31,8 @@ public:
 
     void debug_oam();
 
-    PrintConsole *print_console{};
+    PrintConsole main_console{};
+    PrintConsole sub_console{};
 
     static Hud* _instance;
 };

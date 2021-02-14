@@ -48,16 +48,16 @@ void Hud::init_console() {
 
     //The default instance utilizes the sub display, approximatly 15KiB of vram C starting
     //at tile base 0 and 2KiB of map at map base 30.
-    consoleInit(print_console,
+    consoleInit(&main_console,
                (int)LayerLevel::TOP,
                BgType_Text4bpp,
                BgSize_T_256x256,
                map_base,
                tile_base,
                true, // Main or Sub
-               true);
+               false);
 
-    ConsoleFont font;
+   ConsoleFont font;
    font.gfx = (u16*)fontTiles;
    font.pal = (u16*)fontPal;
    font.numChars = 95;
@@ -66,5 +66,8 @@ void Hud::init_console() {
    font.asciiOffset = 32;
    font.convertSingleColor = false;
 
-    consoleSetFont(print_console, &font);
+    consoleSetFont(&main_console, &font);
+
+   consoleInit(&sub_console, 0, BgType_Text4bpp, BgSize_T_256x256, map_base, tile_base, false, false);
+   consoleSetFont(&sub_console, &font);
 }

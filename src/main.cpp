@@ -40,20 +40,24 @@ int main() {
    // Setup hardware
    InitHardware();
    OAMManager::init_sprite_hardware();
-   OAMManager::init_background_hardware();
+   //OAMManager::init_background_hardware();
 
    //Copy background tiles to the graphics memory
-   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::main()._background_id), sizeof(backgroundBitmap));
-   dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::sub()._background_id), sizeof(backgroundBitmap));
+   //dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::main()._background_id), sizeof(backgroundBitmap));
+   //dmaCopy(backgroundBitmap, bgGetGfxPtr(OAMManager::sub()._background_id), sizeof(backgroundBitmap));
 
    // Setup fonts
    Hud::instance().init_console();
 
    // Copy  background palette to the graphics memory
-   dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
-   dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
+   //dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
+   //dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
 
-   iprintf("\n\n\tHello World\n");
+   consoleSelect(&Hud::instance().main_console);
+   iprintf("\n\n\tHello World (main)\n");
+
+   consoleSelect(&Hud::instance().sub_console);
+   iprintf("\n\n\tHello World (sub)\n");
 
    lcdMainOnBottom();
 
@@ -82,13 +86,14 @@ void InitHardware(void) {
    vramSetBankD(VRAM_D_SUB_SPRITE);
 
    /* Set the video mode on the main screen. */
-	videoSetMode(MODE_5_2D |
+	videoSetMode(MODE_0_2D |
                 DISPLAY_SPR_ACTIVE |    // Turn on sprites
                 DISPLAY_BG3_ACTIVE |    // Enable BG3 for display
                 DISPLAY_SPR_1D_LAYOUT);
 
     /* Set the video mode on the sub screen. */
-    videoSetModeSub(MODE_5_2D |          // Set the graphics mode to Mode 5
+    videoSetModeSub(MODE_0_2D |          // Set the graphics mode to Mode 0
+                    DISPLAY_SPR_ACTIVE | // Turn on sprites
                     DISPLAY_BG3_ACTIVE); // Enable BG3 for display
 }
 
