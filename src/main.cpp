@@ -5,7 +5,7 @@
 
 // GRIT auto-generated  files
 #include "background.h"
-//#include "font.h"
+#include "colours.h"
 // #include "glfont_krom.h"
 // #include "shuttle.h"
 
@@ -32,6 +32,8 @@ int main() {
       defaultExceptionHandler();
    #endif
 
+   lcdMainOnBottom();
+
    // Setup singletons 
    GameState::init();
    OAMManager::init();
@@ -50,21 +52,26 @@ int main() {
    Hud::instance().init_console();
 
    // Copy  background palette to the graphics memory
-   dmaCopy(backgroundPal, BG_PALETTE, backgroundPalLen);
-   dmaCopy(backgroundPal, BG_PALETTE_SUB, backgroundPalLen);
-
-   consoleSelect(Hud::instance().main_console);
-   iprintf("\n\n\tHello World (main)\n");
-
-   consoleSelect(Hud::instance().sub_console);
-   iprintf("\n\n\tHello World (sub)\n");
-
-   lcdMainOnBottom();
+   dmaCopy(coloursPal, BG_PALETTE, coloursPalLen);
+   dmaCopy(coloursPal, BG_PALETTE_SUB, coloursPalLen);
 
    while(1) {
       swiWaitForVBlank();
       rtc.Update();
       ctrl.ScanKeyPresses();
+
+      tm time = rtc.Time();
+
+      consoleSelect(Hud::instance().main_console);
+      consoleClear();
+      iprintf("\n\n\tHello World (main)\n");
+      iprintf("\t%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
+
+      consoleSelect(Hud::instance().sub_console);
+      consoleClear();
+      iprintf("\n\n\tHello World (sub)\n");
+      iprintf("\t%02d:%02d:%02d", time.tm_hour, time.tm_min, time.tm_sec);
+
       if (ctrl.A.Pressed()) break;
    }
 
@@ -76,7 +83,7 @@ int main() {
 
 void InitHardware(void) {
    /*  Turn on the 2D graphics core. */
-   // powerOn(POWER_ALL_2D);
+   powerOn(POWER_ALL_2D);
 
    // Setup memory allocation for graphics
    // <https://mtheall.com/banks.html#A=MBG0&B=MOBJ0&C=SBG&D=SOBJ>
@@ -88,12 +95,14 @@ void InitHardware(void) {
    /* Set the video mode on the main screen. */
 	videoSetMode(MODE_0_2D |
                 DISPLAY_SPR_ACTIVE |    // Turn on sprites
+                DISPLAY_BG0_ACTIVE |
                 DISPLAY_BG3_ACTIVE |    // Enable BG3 for display
                 DISPLAY_SPR_1D_LAYOUT);
 
     /* Set the video mode on the sub screen. */
     videoSetModeSub(MODE_0_2D |          // Set the graphics mode to Mode 0
                     DISPLAY_SPR_ACTIVE | // Turn on sprites
+                    DISPLAY_BG0_ACTIVE |
                     DISPLAY_BG3_ACTIVE); // Enable BG3 for display
 }
 
